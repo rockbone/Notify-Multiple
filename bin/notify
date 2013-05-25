@@ -1,0 +1,29 @@
+#!/usr/bin/env perl
+
+=head1 NAME
+
+=head1 DESCRIPTION
+
+=head1 SYNOPSIS
+
+=cut
+
+use strict;
+use warnings;
+use utf8;
+use Notify::Multiple;
+use Getopt::Long qw/:config posix_default no_ignore_case bundling auto_help/;
+use Pod::Usage qw/pod2usage/;
+
+GetOptions(
+    \my %opt, qw/
+    t|type=s
+    d|decode=s
+    l|list
+    p|plugin_dir
+    c|config
+/) or pod2usage(1);
+pod2usage(2) if !grep { exists $opt{$_} } qw/t l/; # option required either t or i
+
+Notify::Multiple->run( \%opt,@ARGV );
+exit 0;
