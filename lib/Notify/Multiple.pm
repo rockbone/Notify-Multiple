@@ -55,7 +55,10 @@ sub hook {
         eval "require $module";
         $cv->begin;
         my $w;$w = AE::timer 0,0,sub {
-            $module->hook( $self->stdin,$plugin->{arg} );
+            {
+                no strict "refs";
+                &{ "$module\::hook" }( $self->stdin,$plugin->{arg} );
+            }
             undef $w;
             $cv->end;
         }

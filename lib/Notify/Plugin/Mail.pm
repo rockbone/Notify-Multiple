@@ -14,8 +14,8 @@ my $DEFAULT_SENDER = "notify_multiple\@$host";
 # TO FROM SUBJECT
 my %arg;
 sub hook {
-    my ( $class,$IN,$arg ) = @_;
-    if ( !%$arg ){
+    my ( $IN,$arg ) = @_;
+    if ( !$arg->{to} ){
         die "mail recipient is not specified\n";
     }
     
