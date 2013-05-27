@@ -98,6 +98,7 @@ B<plugin:>
     just write it in your module.
 
 C<sub hook{...}>
+    
     Arguments reseived from 'notify' are...
     1,INPUT <Scalar Reference>
         because filter plugin orverwite this without return value
