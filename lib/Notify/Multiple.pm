@@ -57,6 +57,8 @@ sub hook {
         my $w;$w = AE::timer 0,0,sub {
             {
                 no strict "refs";
+                my $plugin_type = lc ${ "$module\::TYPE" };
+                die "Error. Selected plugin type [$plugin_type] where expected [$action]" if $action ne $plugin_type;
                 &{ "$module\::hook" }( $self->stdin,$plugin->{arg} );
             }
             undef $w;

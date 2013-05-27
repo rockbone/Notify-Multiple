@@ -1,11 +1,134 @@
 #!/usr/bin/env perl
 
+=encoding utf8
+
 =head1 NAME
+
+    notify - Provide Multiple Notification simply
 
 =head1 DESCRIPTION
 
-=head1 SYNOPSIS
+    'notify' is the command provide Multiple Notification easily.
+    It can notify one or more way ,and even filter input.
+    You can also adding the function to filter or to notify by your
+    self.See ADDING PPLUGIN below.
 
+=head1 SYNOPSIS
+     
+=head2 notify -t Mail,Growl -d utf8 to=you@notify.me
+    
+    -t - select type of notification (separated by commas)
+    -d - specify the charset to decode input
+    -p - set directory where Plugins are.
+
+=head2 notify -c config.yaml
+    
+    -c - Specify the config file wrote in YAML format.
+         (Any other command line option is unable when you set this.)
+
+B<config file example>
+    
+    global:
+     decode: CHARSET
+     plugin_path: /PATH/TO/PLUGIN
+    plugin:
+     filter:
+      name: FILTER_NAME
+      path: /PATH/TO/FILTER
+      arg:
+       KEY1: VAL1
+       KEY2: VAL2
+     notify:
+      name: NOTIFY_NAME
+      path: /PATH/TO/NOTIFY
+      arg:
+       KEY1: VAL1
+       KEY2: VAL2
+
+B<global:>
+    decode       - charset to decode input
+    plugin_path  - specify the path to plugin
+                   (default @{INC}/Notify/Plugin/)
+
+B<plugin:>
+    filter       - set plugin call filter phase
+    notify       - set plugin call notify phase
+        name     - Name of plugin (exclude .pm suffix)
+        path     - specify the path to plugin
+        arg      - argument for each plugin as hash
+    
+=head2 even specified more than 2 plugin for 1 phase with array
+    
+    global:
+     decode: CHARSET
+     plugin_path: /PATH/TO/PLUGIN
+    plugin:
+     filter:
+      -
+       name: FILTER_NAME1
+       path: /PATH/TO/FILTER1
+       arg:
+        KEY1: VAL1
+        KEY2: VAL2
+      -
+       name: FILTER_NAME
+       path: /PATH/TO/FILTER2
+       arg:
+        KEY1: VAL1
+        KEY2: VAL2
+     notify:
+      -
+       name: NOTIFY_NAME1
+       path: /PATH/TO/NOTIFY1
+       arg:
+        KEY1: VAL1
+        KEY2: VAL2
+      -
+       name: NOTIFY_NAME2
+       path: /PATH/TO/NOTIFY2
+       arg:
+        KEY1: VAL1
+        KEY2: VAL2
+
+=head1 ADDING PLUGIN
+    
+    You can add plugin by your self.
+    The plugun is one of usual Perl module it has '.pm' suffix.
+    'notify' call subroutin named 'hook' in your plugin.So you
+    just write it in your module.
+
+C<sub hook{...}>
+    Arguments reseived from 'notify' are...
+    1,INPUT <Scalar Reference>
+        because filter plugin orverwite this without return value
+    2,Argument <Hash Reference>
+        you specified from command line or config file
+        (The letters of each key has changed to lower case.)
+    
+    And Set variable $TYPE type of plugin (it means phase)
+        Types are...
+            1,filter
+            2,notify
+
+B<example>
+    
+    package Notify::Multiple::Messenger;
+
+    our $TYPE = "notify";
+
+    sub hook {
+        my ( $IN,$arg ) = @_;
+        ........ do something
+    }
+    1;
+
+=head1 AUTHOR
+    
+B<Tooru Iwasaki <rockbone.g{at}gmail.com> 2013/05/27 >
+
+=head1 LICENSE
+    
+    FREE! ENJOY!
 =cut
 
 use strict;

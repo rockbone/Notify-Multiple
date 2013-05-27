@@ -6,6 +6,7 @@ use Net::SMTP;
 use Encode;
 
 our $VERSION = 0.1;
+our $TYPE = 'notify';
 
 chomp( my $host = `hostname` );
 my $DEFAULT_SENDER = "notify_multiple\@$host";
@@ -24,7 +25,7 @@ sub hook {
 
 sub sendmail {
     my ( $IN,$arg ) = @_;
-    my $subject = $arg->{subject} ? encode( "MIME-Header-ISO_2022_JP",$arg{SUBJECT} ) : "";
+    my $subject = $arg->{subject} ? encode( "MIME-Header-ISO_2022_JP",$arg->{subject} ) : "";
     my $msg  = encode( "iso-2022-jp",$IN );
     my $from = $arg->{from} || $DEFAULT_SENDER;
     my $to   = $arg->{to};
