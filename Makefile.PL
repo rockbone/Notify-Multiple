@@ -5,13 +5,17 @@ use ExtUtils::MakeMaker;
 
 
 WriteMakefile(
-    NAME          => '',
-    AUTHOR        => '',
-    LICENSE       => '',
-    ABSTRACT      => '',
-    VERSION_FROM  => '',
+    NAME          => 'notify',
+    AUTHOR        => 'Tooru Iwasaki <rockbone.g{at}gmail.com>',
+    LICENSE       => 'perl',
+    ABSTRACT      => 'Pluggable Notification Program',
+    VERSION_FROM  => 'lib/Notify/Multiple.pm',
     PREREQ_PM     => {
-        ''      => ,
-        '' => ,
-    },
+        'YAML'      => 0,
+        'Class::Accessor::Fast' => 0,
+        'Storable' => 0,
+        'AnyEvent' => 0,
+        'Test::More' => 0
+    }
 );
+exit;
