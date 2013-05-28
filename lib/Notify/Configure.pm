@@ -7,22 +7,6 @@ use YAML qw/LoadFile/;
 use parent 'Class::Accessor::Fast';
 __PACKAGE__->mk_accessors( qw/opt filter notify/ );
 
-#global:
-# decode: CHARSET
-# plugin_path: PATH_TO_PLUGIN
-#plugin:
-# filter:
-#  name: FILTER_NAME
-##  path: PATH_TO_FILTER
-#  arg:
-#   KEY1: VAL1
-#   KEY2: VAL2
-# notify:
-#  nmae: NOTIFY_NAME
-##  path: PATH_TO_NOTIFY
-#  arg:
-#   KEY1: VAL1
-#   KEY2: VAL2
 
 sub new {
     my ( $class,$opt,@argv ) = @_;
@@ -71,3 +55,38 @@ sub parse_argv {
     return \%argv;
 }
 1;
+
+__END__
+
+=encoding utf8
+
+=head1 NAME
+    
+    Notify::Configure - Notify Configure Class
+
+=head1 DESCRIPTION
+    
+    Initialize the settings for notification by option and ARGV.
+
+=head1 METHOD
+    
+B<new>
+    
+    args: (classname,options,ARGV) If config file is given,set it.
+    Otherwise set it from option and ARGV.Options are orverwrite
+    if specify the config file ,and ignore ARGV.
+    
+B<parse_argv>
+    
+    args: (self,ARGV) return Hash Reference it has key and val
+    separeted by '='.
+    
+=head1 AUTHOR
+    
+    Tooru Iwasaki <rockbone.g{at}gmail.com>
+
+=head1 LICENCE
+    
+    FREE! ENJOY!
+
+=cut

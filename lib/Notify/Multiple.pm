@@ -68,3 +68,40 @@ sub hook {
     $cv->recv;
 }
 1;
+
+__END__
+
+=encoding utf8
+
+=head1 NAME
+    
+    Notify::Multiple - Notify Controller Class
+
+=head1 DESCRIPTION
+    
+    Fix option,ARGV,config,plugins.Decode STDIN automatically
+    if do not specify command option '-d(--decode)'.
+
+=head1 METHOD
+    
+B<new>
+    
+    args: (classname,options,ARGV)
+    
+B<run>
+    
+    args: (classname,options,ARGV) Call from 'notify'
+    
+B<hook>
+    
+    args: (self,action) Fix and execute plugin by action.
+    
+=head1 AUTHOR
+    
+    Tooru Iwasaki <rockbone.g{at}gmail.com>
+
+=head1 LICENCE
+    
+    FREE! ENJOY!
+
+=cut

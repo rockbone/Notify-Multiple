@@ -79,3 +79,48 @@ sub find_plugin {
 sub filter { +shift->{filter} }
 sub notify { +shift->{notify} }
 1;
+
+__END__
+
+=encoding utf8
+
+=head1 NAME
+    
+    Notify::Plugin - Plugin Manager Class
+
+=head1 DESCRIPTION
+    
+    Manage the plugins for 'notify'.Search and set plugins from directory
+    specified as argument.If not it(default), "Notify/Plugin/".
+
+=head1 METHOD
+    
+B<new>
+    
+    args: (classname,plugin_dir)  default plugin_dir Notify/Plugin/ if not it as arg.
+    
+B<show_list>
+    
+    display list of plugins
+    
+B<find_plugin>
+    
+    args: (self,Object of Notify::Config class) Search and set plugins.
+    
+B<filter>
+    
+    return filter plugins as ARRAY Reference
+    
+B<Notify>
+    
+    return filter plugins as ARRAY Reference
+
+=head1 AUTHOR
+    
+    Tooru Iwasaki <rockbone.g{at}gmail.com>
+
+=head1 LICENCE
+    
+    FREE! ENJOY!
+
+=cut

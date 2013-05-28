@@ -34,27 +34,26 @@ B<config file example>
     plugin:
      filter:
       name: FILTER_NAME
-      path: /PATH/TO/FILTER
       arg:
        KEY1: VAL1
        KEY2: VAL2
      notify:
       name: NOTIFY_NAME
-      path: /PATH/TO/NOTIFY
       arg:
        KEY1: VAL1
        KEY2: VAL2
 
 B<global:>
+    
     decode       - charset to decode input
     plugin_path  - specify the path to plugin
                    (default @{INC}/Notify/Plugin/)
 
 B<plugin:>
+    
     filter       - set plugin call filter phase
     notify       - set plugin call notify phase
         name     - Name of plugin (exclude .pm suffix)
-        path     - specify the path to plugin
         arg      - argument for each plugin as hash
     
 =head2 even specified more than 2 plugin for 1 phase with array
@@ -66,26 +65,22 @@ B<plugin:>
      filter:
       -
        name: FILTER_NAME1
-       path: /PATH/TO/FILTER1
        arg:
         KEY1: VAL1
         KEY2: VAL2
       -
        name: FILTER_NAME
-       path: /PATH/TO/FILTER2
        arg:
         KEY1: VAL1
         KEY2: VAL2
      notify:
       -
        name: NOTIFY_NAME1
-       path: /PATH/TO/NOTIFY1
        arg:
         KEY1: VAL1
         KEY2: VAL2
       -
        name: NOTIFY_NAME2
-       path: /PATH/TO/NOTIFY2
        arg:
         KEY1: VAL1
         KEY2: VAL2
@@ -145,9 +140,9 @@ GetOptions(
     d|decode=s
     l|list
     p|plugin_dir
-    c|config
+    c|config=s
 /) or pod2usage(1);
-pod2usage(2) if !grep { exists $opt{$_} } qw/t l/; # option required either t or i
+pod2usage(2) if !grep { exists $opt{$_} } qw/t l c/; # option required t or i or c
 
 Notify::Multiple->run( \%opt,@ARGV );
 exit 0;
