@@ -132,7 +132,6 @@ use warnings;
 use utf8;
 use Notify::Multiple;
 use Getopt::Long qw/:config posix_default no_ignore_case bundling auto_help/;
-use Pod::Usage qw/pod2usage/;
 
 GetOptions(
     \my %opt, qw/
@@ -142,7 +141,22 @@ GetOptions(
     p|plugin_dir
     c|config=s
 /) or pod2usage(1);
-pod2usage(2) if !grep { exists $opt{$_} } qw/t l c/; # option required t or i or c
+usage() if !grep { exists $opt{$_} } qw/t l c/; # option required t or i or c
 
 Notify::Multiple->run( \%opt,@ARGV );
 exit 0;
+
+sub usage {
+    print STDERR <<EOF;
+Usage:
+    $0
+        -t --type       specify name of plugin (commas eparated)
+        -l --list       flag to show list of all plugins
+        -d --decode     specify the charset to decode INPUT
+        -p --plugin_dir specify the path to directory of plugins
+        -c --config     specify the file name of config that written in YAML
+            
+    **MORE INFO perldoc $0
+EOF
+    exit 1;
+}
