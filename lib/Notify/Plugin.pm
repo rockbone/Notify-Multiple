@@ -45,7 +45,7 @@ sub show_list {
 
 sub find_plugin {
     my ( $self,$config ) = @_;
-
+    
     # below two hash,to find non exists plugin specified in config
     my %config_filter;
     if ( $config->filter ){
@@ -54,7 +54,7 @@ sub find_plugin {
     my %config_notify = map{ $_->{name} => 0 } @{ $config->notify };
     if ( $config->filter ){
         for my $filter ( @{ $config->filter } ){
-            if ( my ( $fullname ) = map{ $_->{fullname} }grep{ $filter->{name} eq $_->{name} } $self->plugin_list ){
+            if ( my ( $fullname ) = map{ $_->{fullname} }grep{ $filter->{name} eq $_->{name} } @{ $self->plugin_list } ){
                 $filter->{fullname} = $fullname;
                 push @{ $self->{filter} },dclone($filter);
                 $config_filter{ $filter->{name} } = 1; # flag is on when find it
@@ -62,7 +62,7 @@ sub find_plugin {
         }
     }
     for my $notify ( @{ $config->notify } ){
-        if ( my ( $fullname ) = map{ $_->{fullname} }grep{ $notify->{name} eq $_->{name} } $self->plugin_list ){
+        if ( my ( $fullname ) = map{ $_->{fullname} }grep{ $notify->{name} eq $_->{name} } @{ $self->plugin_list } ){
             $notify->{fullname} = $fullname;
             push @{ $self->{notify} },dclone($notify);
             $config_notify{ $notify->{name} } = 1; # flag is on when find it

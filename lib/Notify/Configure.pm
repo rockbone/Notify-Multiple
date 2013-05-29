@@ -19,8 +19,8 @@ sub new {
             or die "Failed to parsing YAML data from [$config_file]\n";
         my $opt_overwrite = {};
         my $global = $config->{global};
-        $opt->{d} = $global->{decode} || '';
-        $opt->{p} = $global->{plugin_path} || '';
+        $opt_overwrite->{d} = $global->{decode} || '';
+        $opt_overwrite->{p} = $global->{plugin_path} || '';
         $self->opt( $opt_overwrite );
 
         $self->filter( $config->{plugin}{filter} );

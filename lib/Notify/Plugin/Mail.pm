@@ -5,7 +5,7 @@ use warnings;
 use Net::SMTP;
 use Encode;
 
-our $VERSION = 0.1;
+our $VERSION = 0.01;
 our $TYPE = 'notify';
 
 chomp( my $host = `hostname` );
@@ -15,16 +15,16 @@ my $DEFAULT_SENDER = "notify_multiple\@$host";
 # TO FROM SUBJECT
 my %arg;
 sub hook {
-    my ( $IN,$arg ) = @_;
+    my ( $IN,$arg,$note ) = @_;
     if ( !$arg->{to} ){
         die "mail recipient is not specified\n";
     }
     
-    sendmail( $$IN,$arg );
+    sendmail( $$IN,$arg,$note );
 }
 
 sub sendmail {
-    my ( $IN,$arg ) = @_;
+    my ( $IN,$arg,$note ) = @_;
     my $subject = $arg->{subject} ? encode( "MIME-Header-ISO_2022_JP",$arg->{subject} ) : "";
     my $msg  = encode( "iso-2022-jp",$IN );
     my $from = $arg->{from} || $DEFAULT_SENDER;
@@ -38,8 +38,18 @@ sub sendmail {
         $smtp->recipient( $to )
             or die;
         $smtp->data;
-        $smtp->datasend( "Content-Type: text/plain;charset=iso-2022-jp\n" )
-            or die;
+        if ( $note->{base64} ){
+            $smtp->datasend( "Content-Disposition: inline;filename=".$note->{filename}."\n" )
+                or die;
+            $smtp->datasend( "Content-Type: ".$note->{type}.";name=".$note->{filename}."\n" )
+                or die;
+            $smtp->datasend( "Content-Transfer-Encoding: base64\n" )
+                or die;
+        }
+        else{
+            $smtp->datasend( "Content-Type: text/plain;charset=iso-2022-jp\n" )
+                or die;
+        }
         $smtp->datasend( "From: $from\n" )
             or die;
         $smtp->datasend( "To: $to\n" )

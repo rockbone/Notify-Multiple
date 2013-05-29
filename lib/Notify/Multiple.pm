@@ -9,7 +9,7 @@ use Encode::Guess qw/cp932 shift-jis 7bit-jis/;
 use AnyEvent;
 use Data::Dumper;
 
-our $VERSION = 0.1;
+our $VERSION = 0.01;
 
 use parent qw/Class::Accessor::Fast/;
 __PACKAGE__->mk_accessors( qw/plugin config opt stdin/ );
@@ -31,22 +31,24 @@ sub run {
     {
         local $/;
         my $IN = <STDIN>;
-        if ( $self->config->opt->{d} ){ # charset
+        if ( $self->config->opt->{d} && $self->config->opt->{d} ne 'no' ){ # charset
             $IN = decode( $self->config->opt->{d},$IN );
         }
-        else{
+        elsif ( !$self->config->opt->{d} ){
             my $decoder = Encode::Guess->guess( $IN );
             die "Can't guess encoding [$decoder]\nPlease set INPUT charset -d( --decode ) option\n" if !ref $decoder;
             $IN = $decoder->decode( $IN );
         }
         $self->stdin( \$IN ); # reference
     }
-    $self->hook( 'filter' );
-    $self->hook( 'notify' );
+    
+    my $note_through_phase = {}; # common argment from phase to next phase
+    $self->hook( 'filter',$note_through_phase );
+    $self->hook( 'notify',$note_through_phase );
 }
 
 sub hook {
-    my ( $self,$action ) = @_;
+    my ( $self,$action,$note ) = @_;
     return if !$self->plugin->$action;
     
     my $cv = AE::cv;
@@ -57,9 +59,9 @@ sub hook {
         my $w;$w = AE::timer 0,0,sub {
             {
                 no strict "refs";
-                my $plugin_type = lc ${ "$module\::TYPE" };
+                my $plugin_type = lc ${"$module\::TYPE"};
                 die "Error. Selected plugin type [$plugin_type] where expected [$action]" if $action ne $plugin_type;
-                &{ "$module\::hook" }( $self->stdin,$plugin->{arg} );
+                &{ "$module\::hook" }( $self->stdin,$plugin->{arg},$note );
             }
             undef $w;
             $cv->end;
