@@ -39,7 +39,7 @@ sub sendmail {
             or die;
         $smtp->data;
         if ( $note->{base64} ){
-            $smtp->datasend( "Content-Disposition: inline;filename=".$note->{filename}."\n" )
+            $smtp->datasend( "Content-Disposition: attachment;filename=".$note->{filename}."\n" )
                 or die;
             $smtp->datasend( "Content-Type: ".$note->{type}.";name=".$note->{filename}."\n" )
                 or die;
