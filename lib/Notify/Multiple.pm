@@ -30,15 +30,7 @@ sub run {
     my $self = $class->new( @_ ); # command option,$ARGV
     {
         local $/;
-        my $IN = <STDIN>;
-        if ( $self->config->opt->{d} && $self->config->opt->{d} ne 'no' ){ # charset
-            $IN = decode( $self->config->opt->{d},$IN );
-        }
-        elsif ( !$self->config->opt->{d} ){
-            my $decoder = Encode::Guess->guess( $IN );
-            die "Can't guess encoding [$decoder]\nPlease set INPUT charset -d( --decode ) option\n" if !ref $decoder;
-            $IN = $decoder->decode( $IN );
-        }
+        my $IN = $self->decode_content( <STDIN> );
         $self->stdin( \$IN ); # reference
     }
     
@@ -55,19 +47,44 @@ sub hook {
     for my $plugin ( @{ $self->plugin->$action } ){
         my $module = $plugin->{fullname};
         eval "require $module";
-        $cv->begin;
-        my $w;$w = AE::timer 0,0,sub {
+        my $callback = sub {
+            my $watcher = shift || "";
             {
                 no strict "refs";
                 my $plugin_type = lc ${"$module\::TYPE"};
                 die "Error. Selected plugin type [$plugin_type] where expected [$action]" if $action ne $plugin_type;
                 &{ "$module\::hook" }( $self->stdin,$plugin->{arg},$note );
             }
-            undef $w;
-            $cv->end;
+            $cv->end if $watcher;
+            undef $$watcher if $watcher;
+        };
+        if ( $plugin->{async} ){
+            $cv->begin;
+            my $w;$w = AE::timer 0,0,$callback->( \$w );
+        }
+        else{
+            $callback->();
+            $cv->send;
         }
     }
     $cv->recv;
+}
+
+sub decode_content {
+    my ( $self,$content,$charset ) = @_;
+    
+    if ( $charset ){
+        return decode( $charset,$content );
+    }
+    elsif ( $self->config->opt->{d} && $self->config->opt->{d} ne 'no' ){ # charset
+        return decode( $self->config->opt->{d},$content );
+    }
+    elsif ( !$self->config->opt->{d} ){
+        my $decoder = Encode::Guess->guess( $content );
+        die "Can't guess encoding [$decoder]\nPlease set INPUT charset -d( --decode ) option\n" if !ref $decoder;
+        return $decoder->decode( $content );
+    }
+    return $content;
 }
 1;
 
