@@ -9,9 +9,9 @@ our $TYPE = 'notify';
 # icon => icon path
 sub hook {
     my ( $IN,$arg,$note ) = @_;
-    #if ( !growl_installed() || !growl_running() ){
-    #    die "Growl is not running\n";
-    #}
+    if ( !growl_installed() || !growl_running() ){
+        die "Growl is not running\n";
+    }
     my %register = (
         app     => $arg->{app} || 'NotifyMultiple',
         notifications => [qw/Notification1/]
