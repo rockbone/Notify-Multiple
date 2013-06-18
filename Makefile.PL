@@ -15,7 +15,9 @@ WriteMakefile(
         'Class::Accessor::Fast' => 0,
         'Storable' => 0,
         'AnyEvent' => 0,
-        'Test::More' => 0
-    }
+        'Test::More' => 0,
+        'Cocoa::Growl' => 0
+    },
+    EXE_FILES      => [ 'bin/notify' ],
 );
 exit;
